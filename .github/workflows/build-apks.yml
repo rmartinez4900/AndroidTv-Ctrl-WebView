@@ -11,6 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Descargar el proyecto
         uses: actions/checkout@v4
@@ -27,14 +28,14 @@ jobs:
           gradle-version: '8.13'
 
       - name: Preparar SDK de Android
-        uses: android-actions/setup-android@v3
-
-      - name: Instalar paquetes del SDK
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-33"
-          sdkmanager "build-tools;33.0.2"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" \
+            "platforms;android-33" \
+            "build-tools;33.0.2"
 
       - name: Compilar las dos APK
         run: gradle --no-daemon assemblePhoneDebug assembleTvDebug
