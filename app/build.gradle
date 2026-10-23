@@ -15,6 +15,21 @@ android {
         versionName "1.0"
     }
 
+    flavorDimensions "device"
+
+    productFlavors {
+        phone {
+            dimension "device"
+            applicationIdSuffix ".phone"
+            versionNameSuffix "-phone"
+        }
+        tv {
+            dimension "device"
+            applicationIdSuffix ".tv"
+            versionNameSuffix "-tv"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true  // Optimización para reducir tamaño

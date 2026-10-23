@@ -1,0 +1,46 @@
+name: Compilar APK de teléfono y Android TV
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el proyecto
+        uses: actions/checkout@v4
+
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Instalar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+
+      - name: Instalar SDK de Android
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar plataforma y herramientas
+        run: sdkmanager "platforms;android-33" "build-tools;33.0.2"
+
+      - name: Compilar las dos APK
+        run: gradle --no-daemon assemblePhoneDebug assembleTvDebug
+
+      - name: Publicar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: APK-Telefono-y-Android-TV
+          path: |
+            app/build/outputs/apk/phone/debug/*.apk
+            app/build/outputs/apk/tv/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
